@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the directory where the repository is cloned and other related paths
-REPO_DIR="/opt/kaltura"
+REPO_DIR="/opt/kaltura/mezeze"
 SCRIPT_PATH="$REPO_DIR/mezeze.sh"
 REMOTE_REPO="https://github.com/PaulRoze/mezeze.git"
 
@@ -13,11 +13,27 @@ check_for_updates() {
     # Fetch the latest commits from the remote repository
     git fetch
 
+    # Check if there are local changes
+    if git diff --exit-code; then
+        echo "You have local changes in the script."
+        read -p "Do you want to discard local changes and update to the latest version? [y/N] " yn_discard
+        case $yn_discard in
+            [Yy]* )
+                # Discard local changes
+                git reset --hard
+                ;;
+            * )
+                echo "Update aborted due to local changes."
+                return
+                ;;
+        esac
+    fi
+
     # Check if the local script is behind the remote version
     if git status -uno | grep -q 'Your branch is behind'; then
         echo "A newer version of the script is available."
-        read -p "Do you want to update to the latest version? [y/N] " yn
-        case $yn in
+        read -p "Do you want to update to the latest version? [y/N] " yn_update
+        case $yn_update in
             [Yy]* )
                 # Pull the latest changes
                 git pull
