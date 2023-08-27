@@ -24,39 +24,20 @@ check_for_updates() {
     # Fetch the latest commits from the remote repository
     git fetch
 
-    # Check if there are local changes
-    if git diff --exit-code; then
-        echo "You have local changes in the script."
-        read -p "Do you want to discard local changes and update to the latest version? [y/N] " yn_discard
-        case $yn_discard in
-            [Yy]* )
-                # Discard local changes
-                git reset --hard
-                ;;
-            * )
-                echo "Update aborted due to local changes."
-                return
-                ;;
-        esac
-    fi
+    # Discard any local changes
+    git reset --hard origin/main
 
     # Check if the local script is behind the remote version
     if git status -uno | grep -q 'Your branch is behind'; then
         echo "A newer version of the script is available."
-        read -p "Do you want to update to the latest version? [y/N] " yn_update
-        case $yn_update in
-            [Yy]* )
-                # Pull the latest changes
-                git pull
-                echo "Script updated. Re-running the updated script..."
-                # Re-run the script without checking for updates and pass the original arguments
-                CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
-                exit 0
-                ;;
-            * )
-                echo "Update skipped."
-                ;;
-        esac
+        # Pull the latest changes
+        git pull
+        echo "Script updated. Re-running the updated script..."
+        # Re-run the script without checking for updates and pass the original arguments
+        CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
+        exit 0
+    else
+        echo "You are using the latest version of the script."
     fi
 }
 
