@@ -5,8 +5,16 @@ REPO_DIR="/opt/kaltura/mezeze"
 SCRIPT_PATH="$REPO_DIR/mezeze.sh"
 REMOTE_REPO="https://github.com/PaulRoze/mezeze.git"
 
+# Flag to determine if we should check for updates
+CHECK_FOR_UPDATES=true
+
 # Function to check and pull the latest version of the script
 check_for_updates() {
+    # If the flag is set to false, skip the update check
+    if [ "$CHECK_FOR_UPDATES" = false ]; then
+        return
+    fi
+
     # Navigate to the script's repository directory
     cd "$REPO_DIR"
 
@@ -38,8 +46,8 @@ check_for_updates() {
                 # Pull the latest changes
                 git pull
                 echo "Script updated. Re-running the updated script..."
-                # Re-run the script
-                exec "$SCRIPT_PATH"
+                # Re-run the script without checking for updates
+                CHECK_FOR_UPDATES=false exec "$SCRIPT_PATH"
                 exit 0
                 ;;
             * )
