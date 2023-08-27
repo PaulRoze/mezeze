@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Define the path to the script and the remote repository URL
-SCRIPT_PATH="/usr/local/bin/mezeze.sh"
+# Define the directory where the repository is cloned and other related paths
+REPO_DIR="/opt/kaltura"
+SCRIPT_PATH="$REPO_DIR/mezeze.sh"
 REMOTE_REPO="https://github.com/PaulRoze/mezeze.git"
 
 # Function to check and pull the latest version of the script
 check_for_updates() {
-    # Navigate to the script directory
-    cd "$(dirname "$SCRIPT_PATH")"
+    # Navigate to the script's repository directory
+    cd "$REPO_DIR"
 
     # Fetch the latest commits from the remote repository
     git fetch
