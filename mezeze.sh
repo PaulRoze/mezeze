@@ -5,6 +5,9 @@ REPO_DIR="/opt/kaltura/mezeze"
 SCRIPT_PATH="$REPO_DIR/mezeze.sh"
 REMOTE_REPO="https://github.com/PaulRoze/mezeze.git"
 
+# Capture the original arguments
+ORIGINAL_ARGS="$@"
+
 # If the CHECK_FOR_UPDATES environment variable is set, use its value. Otherwise, default to true.
 CHECK_FOR_UPDATES=${CHECK_FOR_UPDATES:-true}
 
@@ -46,12 +49,12 @@ check_for_updates() {
                 # Pull the latest changes
                 git pull
                 echo "Script updated. Re-running the updated script..."
-                # Re-run the script without checking for updates
-                CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH"
+                # Re-run the script without checking for updates and pass the original arguments
+                CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
                 exit 0
                 ;;
             * )
-                echo "Proceeding with the current version of the script."
+                echo "Update skipped."
                 ;;
         esac
     fi
