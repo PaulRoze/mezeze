@@ -32,6 +32,8 @@ check_for_updates() {
         echo "A newer version of the script is available."
         # Pull the latest changes
         git pull
+        # Ensure the script has execute permissions
+        chmod +x "$SCRIPT_PATH"
         echo "Script updated. Re-running the updated script..."
         # Re-run the script without checking for updates and pass the original arguments
         CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
