@@ -41,7 +41,7 @@ You can also view the usage instructions by running:
 
 ### Update Check
 
-The script checks for updates from the remote repository. If a newer version is available, it will prompt the user to update. If the user agrees, the script will pull the latest changes and re-run itself.
+The script checks for updates from the remote repository. If a newer version is available, the script will pull the latest changes and re-run itself.
 
 ### User Creation
 
