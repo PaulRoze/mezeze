@@ -21,25 +21,53 @@ check_for_updates() {
     # Navigate to the script's repository directory
     cd "$REPO_DIR"
 
-    # Fetch the latest commits from the remote repository
-    git fetch
+    # Fetch the latest commits from the remote repository silently
+    git fetch -q
 
-    # Discard any local changes
-    git reset --hard origin/main
+    # Discard any local changes silently
+    git reset --hard origin/main -q
 
     # Check if the local script is behind the remote version
     if git status -uno | grep -q 'Your branch is behind'; then
         echo "A newer version of the script is available."
-        # Pull the latest changes
-        git pull
-        # Ensure the script has execute permissions
-        chmod +x "$SCRIPT_PATH"
-        echo "Script updated. Re-running the updated script..."
-        # Re-run the script without checking for updates and pass the original arguments
-        CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
-        exit 0
-    else
-        echo "You are using the latest version of the script."
+        read -p "Do you want to update to the latest version? [y/N] " yn_update
+        case $yn_update in
+            [Yy]* )
+                # Pull the latest changes silently
+                git pull -q
+                # Ensure the script has execute permissions
+                chmod +x "$SCRIPT_PATH"
+                echo "Script updated. Please wait..."
+                # Re-run the script without checking for updates and pass the original arguments
+                CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
+                exit 0
+                ;;
+            * )
+                # If the user chooses not to update, just continue with the script
+                ;;
+        esac
+    fi
+}
+
+    # Check if the local script is behind the remote version
+    if git status -uno | grep -q 'Your branch is behind'; then
+        echo "A newer version of the script is available."
+        read -p "Do you want to update to the latest version? [y/N] " yn_update
+        case $yn_update in
+            [Yy]* )
+                # Pull the latest changes
+                git pull
+                # Ensure the script has execute permissions
+                chmod +x "$SCRIPT_PATH"
+                echo "Script updated. Re-running the updated script..."
+                # Re-run the script without checking for updates and pass the original arguments
+                CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
+                exit 0
+                ;;
+            * )
+                echo "Continuing with the current version of the script."
+                ;;
+        esac
     fi
 }
 
