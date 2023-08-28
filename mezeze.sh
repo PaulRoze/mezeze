@@ -153,19 +153,55 @@ if [ -f "$ALIAS_FILE" ]; then
     case $yn in
         [Yy]* )
             echo '
-            # kubernetes
-            alias k="kubectl"
-            # ... [rest of the aliases]
-            alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
+# kubernetes
+alias k="kubectl"
+alias k="kubectl"
+alias kx="/usr/local/bin/kubectx"
+alias kn="/usr/local/bin/kubens"
+alias ke="kubectl exec -it"
+alias kl="kubectl logs"
+alias kg="kubectl get"
+alias ktn="kubectl top no --use-protocol-buffers"
+alias ktp="kubectl top pod --use-protocol-buffers"
+alias kd="kubectl describe"
+alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
+alias kgn="kg nodes"
+alias kgp="kg pods"
+alias kgpa="kgp -A"
+alias kgd="kg deployment"
+alias kgr="kg rollout"
+alias kdp="kd pods"
+alias kdd="kd deployment"
+alias kdr="kd rollout"
+alias kdds="kd daemonset"
+alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
             ;;
         * ) echo "Not overwriting the existing Kubernetes aliases.";;
     esac
 else
     echo '
-    # kubernetes
-    alias k="kubectl"
-    # ... [rest of the aliases]
-    alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
+# kubernetes
+alias k="kubectl"
+alias k="kubectl"
+alias kx="/usr/local/bin/kubectx"
+alias kn="/usr/local/bin/kubens"
+alias ke="kubectl exec -it"
+alias kl="kubectl logs"
+alias kg="kubectl get"
+alias ktn="kubectl top no --use-protocol-buffers"
+alias ktp="kubectl top pod --use-protocol-buffers"
+alias kd="kubectl describe"
+alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
+alias kgn="kg nodes"
+alias kgp="kg pods"
+alias kgpa="kgp -A"
+alias kgd="kg deployment"
+alias kgr="kg rollout"
+alias kdp="kd pods"
+alias kdd="kd deployment"
+alias kdr="kd rollout"
+alias kdds="kd daemonset"
+alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
 fi
 
 # Source k8s aliases in .bashrc
