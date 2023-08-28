@@ -49,28 +49,6 @@ check_for_updates() {
     fi
 }
 
-    # Check if the local script is behind the remote version
-    if git status -uno | grep -q 'Your branch is behind'; then
-        echo "A newer version of the script is available."
-        read -p "Do you want to update to the latest version? [y/N] " yn_update
-        case $yn_update in
-            [Yy]* )
-                # Pull the latest changes
-                git pull
-                # Ensure the script has execute permissions
-                chmod +x "$SCRIPT_PATH"
-                echo "Script updated. Re-running the updated script..."
-                # Re-run the script without checking for updates and pass the original arguments
-                CHECK_FOR_UPDATES=false exec env CHECK_FOR_UPDATES=false "$SCRIPT_PATH" $ORIGINAL_ARGS
-                exit 0
-                ;;
-            * )
-                echo "Continuing with the current version of the script."
-                ;;
-        esac
-    fi
-}
-
 # Call the function to check for updates
 check_for_updates
 
