@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="v1.0.1"
 
 # Function to check for script updates
 check_for_update() {
