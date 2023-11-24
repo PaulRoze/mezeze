@@ -5,7 +5,7 @@ SCRIPT_VERSION="1.0.0"
 # Function to check for script updates
 check_for_update() {
     echo "Checking for updates..."
-    local latest_version=$(curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/yourscript.sh | grep '^SCRIPT_VERSION=' | cut -d '"' -f 2)
+    local latest_version=$(curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh | grep '^SCRIPT_VERSION=' | cut -d '"' -f 2)
 
     if [[ $latest_version > $SCRIPT_VERSION ]]; then
         echo "A new version of the script is available: $latest_version"
@@ -26,7 +26,7 @@ update_script() {
     local temp_script="/tmp/$script_name"
 
     echo "Downloading the latest version..."
-    curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/yourscript.sh -o "$temp_script"
+    curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
     if [ -s "$temp_script" ]; then
         chmod +x "$temp_script"
         mv "$temp_script" "$0"
