@@ -1,60 +1,68 @@
-# Mezeze Automation Script
+# Mezeze
 
 ## Overview
-
-The `mezeze.sh` script is designed to automate several tasks related to setting up a new user environment. Specifically, it handles:
-
-- Checking for and pulling the latest version of the script.
-- Creating a new user.
-- Setting up the AWS CLI.
-- Updating the kubeconfig for the user.
-- Adding useful `kubectl` aliases.
-- Installing and configuring `fzf`, a command-line fuzzy finder.
-
-## Prerequisites
-
-- The script should be run as the root user.
-- AWS CLI should be installed and configured on the machine.
-- `git` should be installed on the machine.
-
-## Usage
-
-To run the script, use the following command:
-
-```bash
-./mezeze.sh <username> <region> <environment>
-```
-
-### Arguments:
-
-- `<username>`: The name of the user to create.
-- `<region>`: The AWS region where the EKS clusters are located. If not provided, the script will attempt to determine the region automatically.
-- `<environment>`: The environment name used to construct EKS cluster names for kubeconfig. If not provided, the script will attempt to determine the environment automatically.
-
-You can also view the usage instructions by running:
-
-```bash
-./mezeze.sh --help
-```
+Mezeze is a Bash script designed for AWS and Kubernetes environment management, including automated user creation, AWS CLI configuration, kubeconfig updates, kubectl aliases setup, and fzf installation. This repository also employs a GitHub Actions workflow for automated versioning and release management.
 
 ## Features
 
-### Update Check
+### Script Functionalities
+- **User Creation and Setup:** Automates the creation of a new user and configures their environment for AWS and Kubernetes.
+- **AWS CLI Configuration:** Sets up the AWS CLI for the newly created user.
+- **Kubeconfig Management:** Automatically updates kubeconfig for specified EKS clusters.
+- **Kubectl Aliases:** Adds useful kubectl aliases to the user's `.bashrc`.
+- **FZF Installation:** Installs fzf, a command-line fuzzy finder.
 
-The script checks for updates from the remote repository. If a newer version is available, the script will pull the latest changes and re-run itself.
+### Automated Update Checks
+- The script checks for its latest version at startup and prompts for an update if a newer version is available.
 
-### User Creation
+### GitHub Actions Workflow
+- **Automated Version Increment:** Automatically updates the `SCRIPT_VERSION` on each merged pull request.
+- **Release Management:** Creates a new GitHub release with the updated script version.
 
-If the provided username does not exist on the system, the script will create a new user with the given username.
+## Prerequisites
+- Bash
+- Access to AWS and Kubernetes environments
+- Git (for cloning and contributing)
 
-### AWS CLI and Kubeconfig Setup
+## Usage
 
-The script sets up the AWS CLI and updates the kubeconfig for the created user. It also adds several useful `kubectl` aliases to the user's `.bashrc` file.
+1. **Clone the Repository:**
+```
+git clone https://github.com/PaulRoze/mezeze.git
+```
+2. **Run the Script:**
+```
+cd mezeze;
+chmod +x mezeze.sh;
+./mezeze.sh <username> <region> <environment>
+```
+Replace `<username>`, `<region>`, and `<environment>` with appropriate values.
+You can provide only username, and the script will prompt for the rest of the values.
 
-### `fzf` Installation
+3. **Update Prompt:**
+The script will prompt for updates if a new version is available.
 
-The script checks if `fzf` is installed for the user. If not, it will offer to install it. If `fzf` is already installed, it will offer to remove it.
+## Script Help
+To access the help menu for detailed usage instructions, run:
+```
+./mezeze.sh --help
+```
 
-## Feedback and Contributions
+## Contributing
+Contributions to Mezeze are welcome. To contribute:
 
-If you encounter any issues or have suggestions for improvements, please open an issue on the [GitHub repository](https://github.com/PaulRoze/mezeze). Contributions are welcome!
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit and push your changes.
+4. Open a pull request against the `main` branch.
+
+Contributions will automatically trigger the versioning and release workflow upon merge.
+
+## Issues and Support
+For issues, feature requests, or assistance, please open an issue in the repository.
+
+## License
+This project is released under the [MIT License](LICENSE).
+
+## Acknowledgments
+This project utilizes GitHub Actions for CI/CD, enhancing the software development process.
