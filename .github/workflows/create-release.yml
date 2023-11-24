@@ -1,23 +1,24 @@
 name: Create Release
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - 'v*'
+  release:
+    types: [created]
 
 jobs:
-  release:
+  build-and-release:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Bash Script
+      run: |
+        chmod +x mezeze.sh
+
     - name: Create Release
-      uses: ncipollo/release-action@v1
+      uses: softprops/action-gh-release@v1
       with:
-        tag: ${{ github.ref }}
-        name: Release ${{ github.ref }}
-        body: "Description of the release"
-        draft: false
-        prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+        files: mezeze.sh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
