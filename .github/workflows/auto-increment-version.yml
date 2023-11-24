@@ -18,8 +18,8 @@ jobs:
         id: versioning
         run: |
           SCRIPT_FILE="mezeze.sh"
-          VERSION_LINE=$(grep 'SCRIPT_VERSION=' $SCRIPT_FILE)
-          CURRENT_VERSION=$(echo $VERSION_LINE | cut -d '"' -f 2)
+          VERSION_LINE=$(grep 'SCRIPT_VERSION=' $SCRIPT_FILE | grep -v 'curl')
+          CURRENT_VERSION=$(echo $VERSION_LINE | awk -F'"' '{print $2}')
 
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
           ((VERSION_PARTS[2]++))
