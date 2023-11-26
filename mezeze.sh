@@ -7,7 +7,7 @@ check_for_update() {
     echo "Checking for updates..."
     curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o /tmp/latest_mezeze.sh
     if [ $? -ne 0 ]; then
-        read -p "Error: Failed to check for updates due to no internet connection. Do you want to proceed? [y/N] " yn
+        read -r -p "Error: Failed to check for updates due to no internet connection. Do you want to proceed? [y/N] " yn
         echo # add a newline for clean output
         case $yn in
             [Yy]* ) return 1;; # Skip update process
@@ -19,7 +19,7 @@ check_for_update() {
     if [[ $latest_version > $SCRIPT_VERSION ]]; then
         echo "Current script version: $SCRIPT_VERSION"
         echo "New version available: $latest_version"
-        read -p "Would you like to update to the latest version? [y/N] " yn
+        read -r -p "Would you like to update to the latest version? [y/N] " yn
         case $yn in
             [Yy]* ) update_script; return 0;;
             * ) return 1;;
@@ -38,7 +38,7 @@ update_script() {
     echo "Downloading the latest version..."
     curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
     if [ $? -ne 0 ]; then
-        read -p "Error: Unable to connect to the internet. Do you want to proceed without updating? [y/N] " yn
+        read -r -p "Error: Unable to connect to the internet. Do you want to proceed without updating? [y/N] " yn
         echo # add a newline for clean output
         case $yn in
             [Yy]* ) return 1;; # Skip update process
@@ -47,7 +47,7 @@ update_script() {
     fi
 
     if [ ! -s "$temp_script" ]; then
-        read -p "Failed to download the update. Proceed without updating? [y/N] " yn
+        read -r -p "Failed to download the update. Proceed without updating? [y/N] " yn
         echo # add a newline for clean output
         case $yn in
             [Yy]* ) return 1;; # Skip update process
@@ -124,7 +124,7 @@ echo "Region: [${region}]"
 # Check if the user already exists
 if id "$username" &>/dev/null; then
     echo "User '$username' already exists."
-    read -p "Do you want to continue and update the kubeconfig for ${username}? [y/N] " yn
+    read -r -p "Do you want to continue and update the kubeconfig for ${username}? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* ) ;;
@@ -182,7 +182,7 @@ ALIAS_FILE="/home/$username/.k8s_aliases"
 # Check if .k8s_aliases already exists
 if [ -f "$ALIAS_FILE" ]; then
     echo "Kubernetes aliases file .k8s_aliases already exists for user $username."
-    read -p "Do you want to overwrite the existing Kubernetes aliases? [y/N] " yn
+    read -r -p "Do you want to overwrite the existing Kubernetes aliases? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )
@@ -205,7 +205,7 @@ fi
 # Check if fzf is already installed
 if [ -d "/home/$username/.fzf" ]; then
     echo "fzf is already installed for user $username."
-    read -p "Do you want to remove fzf? [y/N] " yn
+    read -r -p "Do you want to remove fzf? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )
@@ -217,7 +217,7 @@ if [ -d "/home/$username/.fzf" ]; then
         * ) ;;
     esac
 else
-    read -p "Do you want to install fzf for user $username? [y/N] " yn
+    read -r -p "Do you want to install fzf for user $username? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )
