@@ -5,9 +5,19 @@ SCRIPT_VERSION="v1.0.1"
 # Function to check for script updates
 check_for_update() {
     echo "Checking for updates..."
-    local latest_version=$(curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh | grep '^SCRIPT_VERSION=' | cut -d '"' -f 2)
+    curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o /tmp/latest_mezeze.sh
+    if [ $? -ne 0 ]; then
+        echo "Error: Unable to connect to the internet. Do you want to proceed? [y/N]"
+        read -p "" yn
+        case $yn in
+            [Yy]* ) return 1;; # Skip update process
+            * ) exit 1;;
+        esac
+    fi
+    local latest_version=$(grep '^SCRIPT_VERSION=' /tmp/latest_mezeze.sh | cut -d '"' -f 2)
 
     if [[ $latest_version > $SCRIPT_VERSION ]]; then
+        echo "Your current version is: $SCRIPT_VERSION"
         echo "A new version of the script is available: $latest_version"
         read -p "Do you want to update to the latest version? [y/N] " yn
         case $yn in
@@ -26,17 +36,29 @@ update_script() {
     local temp_script="/tmp/$script_name"
 
     echo "Downloading the latest version..."
-    curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
-    if [ -s "$temp_script" ]; then
-        chmod +x "$temp_script"
-        mv "$temp_script" "$0"
-        echo "Update completed. Please rerun the script."
-        exit 0
-    else
-        echo "Failed to download the update."
-        rm -f "$temp_script"
-        exit 1
+    curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
+    if [ $? -ne 0 ]; then
+        echo "Error: Unable to connect to the internet. Do you want to proceed without updating? [y/N]"
+        read -p "" yn
+        case $yn in
+            [Yy]* ) return 1;; # Skip update process
+            * ) exit 1;;
+        esac
     fi
+
+    if [ ! -s "$temp_script" ]; then
+        echo "Failed to download the update. Proceed without updating? [y/N]"
+        read -p "" yn
+        case $yn in
+            [Yy]* ) return 1;; # Skip update process
+            * ) exit 1;;
+        esac
+    fi
+
+    chmod +x "$temp_script"
+    mv "$temp_script" "$0"
+    echo "Update completed. Please rerun the script."
+    exit 0
 }
 
 # Check for updates at the beginning of the script
