@@ -1,0 +1,32 @@
+name: Create Release
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Extract Script Version
+        run: echo "SCRIPT_VERSION=$(grep -oP 'SCRIPT_VERSION=\K.*' mezeze.sh)" >> $GITHUB_ENV
+
+      - name: Check Release Version
+        run: |
+          if [ "$SCRIPT_VERSION" != "$GITHUB_REF" ]; then
+            echo "Error: SCRIPT_VERSION ($SCRIPT_VERSION) does not match the GitHub release tag ($GITHUB_REF)"
+            exit 1
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.SCRIPT_VERSION }}
+          name: Release ${{ env.SCRIPT_VERSION }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
