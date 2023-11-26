@@ -1,6 +1,7 @@
 # Mezeze
 
 ![GitHub License](https://img.shields.io/github/license/PaulRoze/mezeze)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/PaulRoze/mezeze)
 ![GitHub top language](https://img.shields.io/github/languages/top/PaulRoze/mezeze)
 ![GitHub file size in bytes on a specified ref (branch/commit/tag)](https://img.shields.io/github/size/PaulRoze/mezeze/mezeze.sh?label=mezeze.sh)
 
