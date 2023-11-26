@@ -7,8 +7,8 @@ check_for_update() {
     echo "Checking for updates..."
     curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o /tmp/latest_mezeze.sh
     if [ $? -ne 0 ]; then
-        echo "Error: Unable to connect to the internet. Do you want to proceed? [y/N]"
-        read -p "" yn
+        read -p "Error: Failed to check for updates due to no internet connection. Do you want to proceed? [y/N] " yn
+        echo # add a newline for clean output
         case $yn in
             [Yy]* ) return 1;; # Skip update process
             * ) exit 1;;
@@ -17,9 +17,9 @@ check_for_update() {
     local latest_version=$(grep '^SCRIPT_VERSION=' /tmp/latest_mezeze.sh | cut -d '"' -f 2)
 
     if [[ $latest_version > $SCRIPT_VERSION ]]; then
-        echo "Your current version is: $SCRIPT_VERSION"
-        echo "A new version of the script is available: $latest_version"
-        read -p "Do you want to update to the latest version? [y/N] " yn
+        echo "Current script version: $SCRIPT_VERSION"
+        echo "New version available: $latest_version"
+        read -p "Would you like to update to the latest version? [y/N] " yn
         case $yn in
             [Yy]* ) update_script; return 0;;
             * ) return 1;;
@@ -38,8 +38,8 @@ update_script() {
     echo "Downloading the latest version..."
     curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
     if [ $? -ne 0 ]; then
-        echo "Error: Unable to connect to the internet. Do you want to proceed without updating? [y/N]"
-        read -p "" yn
+        read -p "Error: Unable to connect to the internet. Do you want to proceed without updating? [y/N] " yn
+        echo # add a newline for clean output
         case $yn in
             [Yy]* ) return 1;; # Skip update process
             * ) exit 1;;
@@ -47,8 +47,8 @@ update_script() {
     fi
 
     if [ ! -s "$temp_script" ]; then
-        echo "Failed to download the update. Proceed without updating? [y/N]"
-        read -p "" yn
+        read -p "Failed to download the update. Proceed without updating? [y/N] " yn
+        echo # add a newline for clean output
         case $yn in
             [Yy]* ) return 1;; # Skip update process
             * ) exit 1;;
