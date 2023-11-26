@@ -122,6 +122,24 @@ sequenceDiagram
 ```
 ## Issues and Support
 For issues, feature requests, or assistance, please open an issue in the repository.
+* Report by [opening a new issue](https://github.com/PaulRoze/mezeze/issues/new); it's that easy!
+
+🌌 **Crafting the Perfect Bug Report in Mezeze's Universe**:
+
+1. **Quick Summary**: Start with a brief overview. Set the stage for the issue you encountered.
+
+2. **Reproduction Steps**:
+   - Clearly list steps to recreate the bug.
+   - Include code samples if you have them; they're like secret maps to the bug.
+
+3. **Expectation vs. Reality**:
+   - What you thought would happen.
+   - What actually happened.
+
+4. **Extra Notes**:
+   - Any theories or fixes you tried? Share them! They help in our cloud journey.
+
+Simple, clear reports help us make Mezeze even better for navigating the clouds!
 
 ## Contributors
 
