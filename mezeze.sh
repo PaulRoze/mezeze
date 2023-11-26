@@ -150,6 +150,32 @@ for cluster in $CLUSTER_LIST ; do
 done
 echo "Kubeconfig updated successfully for user '$username'."
 
+# Define the aliases as a variable
+KUBECTL_ALIASES=$(cat <<'EOF'
+# kubernetes
+alias k="kubectl"
+alias kx="/usr/local/bin/kubectx"
+alias kn="/usr/local/bin/kubens"
+alias ke="kubectl exec -it"
+alias kl="kubectl logs"
+alias kg="kubectl get"
+alias ktn="kubectl top no --use-protocol-buffers"
+alias ktp="kubectl top pod --use-protocol-buffers"
+alias kd="kubectl describe"
+alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
+alias kgn="kg nodes"
+alias kgp="kg pods"
+alias kgpa="kgp -A"
+alias kgd="kg deployment"
+alias kgr="kg rollout"
+alias kdp="kd pods"
+alias kdd="kd deployment"
+alias kdr="kd rollout"
+alias kdds="kd daemonset"
+alias kgpn="kgp --output=jsonpath={.items..metadata.name}"
+EOF
+)
+
 # Path to the dedicated Kubernetes alias file
 ALIAS_FILE="/home/$username/.k8s_aliases"
 
@@ -160,58 +186,14 @@ if [ -f "$ALIAS_FILE" ]; then
     : ${yn:="n"}
     case $yn in
         [Yy]* )
-            # Overwrite the kubectl aliases in the dedicated file
-            echo '
-            # kubernetes
-            alias k="kubectl"
-            alias kx="/usr/local/bin/kubectx"
-            alias kn="/usr/local/bin/kubens"
-            alias ke="kubectl exec -it"
-            alias kl="kubectl logs"
-            alias kg="kubectl get"
-            alias ktn="kubectl top no --use-protocol-buffers"
-            alias ktp="kubectl top pod --use-protocol-buffers"
-            alias kd="kubectl describe"
-            alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
-            alias kgn="kg nodes"
-            alias kgp="kg pods"
-            alias kgpa="kgp -A"
-            alias kgd="kg deployment"
-            alias kgr="kg rollout"
-            alias kdp="kd pods"
-            alias kdd="kd deployment"
-            alias kdr="kd rollout"
-            alias kdds="kd daemonset"
-            alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
+            echo "$KUBECTL_ALIASES" > $ALIAS_FILE
             ;;
         * )
             echo "Not overwriting the existing Kubernetes aliases."
             ;;
     esac
 else
-    # Create the kubectl aliases in the dedicated file
-    echo '
-    # kubernetes
-    alias k="kubectl"
-    alias kx="/usr/local/bin/kubectx"
-    alias kn="/usr/local/bin/kubens"
-    alias ke="kubectl exec -it"
-    alias kl="kubectl logs"
-    alias kg="kubectl get"
-    alias ktn="kubectl top no --use-protocol-buffers"
-    alias ktp="kubectl top pod --use-protocol-buffers"
-    alias kd="kubectl describe"
-    alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
-    alias kgn="kg nodes"
-    alias kgp="kg pods"
-    alias kgpa="kgp -A"
-    alias kgd="kg deployment"
-    alias kgr="kg rollout"
-    alias kdp="kd pods"
-    alias kdd="kd deployment"
-    alias kdr="kd rollout"
-    alias kdds="kd daemonset"
-    alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
+    echo "$KUBECTL_ALIASES" > $ALIAS_FILE
 fi
 
 # Check if .bashrc already sources the .k8s_aliases file
