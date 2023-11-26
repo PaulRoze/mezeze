@@ -169,7 +169,7 @@ sequenceDiagram
 For issues, feature requests, or assistance, please open an issue in the repository.
 * Report by [opening a new issue](https://github.com/PaulRoze/mezeze/issues/new); it's that easy!
 
-🌌 **Crafting the Perfect Bug Report in Mezeze's Universe**:
+🌌 **Crafting the Perfect Bug Report in Mezeze**:
 
 1. **Quick Summary**: Start with a brief overview. Set the stage for the issue you encountered.
 
