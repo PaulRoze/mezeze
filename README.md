@@ -1,5 +1,9 @@
 # Mezeze
 
+![GitHub License](https://img.shields.io/github/license/PaulRoze/mezeze)
+![GitHub top language](https://img.shields.io/github/languages/top/PaulRoze/mezeze)
+![GitHub file size in bytes on a specified ref (branch/commit/tag)](https://img.shields.io/github/size/PaulRoze/mezeze/mezeze.sh?label=mezeze.sh)
+
 ## Overview
 Mezeze is a Bash script designed for AWS and Kubernetes environment management, including automated user creation, AWS CLI configuration, kubeconfig updates, kubectl aliases setup, and fzf installation.
 ## Features
