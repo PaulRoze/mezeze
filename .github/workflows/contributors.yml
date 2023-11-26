@@ -1,0 +1,21 @@
+name: Update Contributors List
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  update-contributors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Contribute List
+        uses: akhilmhdh/contributors-readme-action@v2.3.6
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          image-size: 60
+          columns-per-row: 6
+          commit-message: "Update contributors list"

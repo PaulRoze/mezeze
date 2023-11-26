@@ -44,7 +44,7 @@ To access the help menu for detailed usage instructions, run:
 ```
 
 ## Logic Flow
-
+```mermaid
 graph TD
     A[Start Script] --> B[Check for updates]
     B -->|Update Available| C[Ask to Update]
@@ -87,9 +87,9 @@ graph TD
     U4 --> U5[fzf Removed]
     U6 --> U5[fzf Installed]
     U5 --> V[Script Execution Completed]
-
+```
 ## Sequence Diagram
-
+```mermaid
 sequenceDiagram
     participant S as Script
     participant U as User
@@ -119,18 +119,14 @@ sequenceDiagram
             F->>S: Show Usage and Exit
         end
     end
-
-## Contributing
-Contributions to Mezeze are welcome. To contribute:
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit and push your changes.
-4. Open a pull request against the `main` branch.
-
-
+```
 ## Issues and Support
 For issues, feature requests, or assistance, please open an issue in the repository.
+
+## Contributors
+
+<!-- readme: collaborators,contributors -start -->
+<!-- readme: collaborators,contributors -end -->
 
 ## License
 This project is released under the [MIT License](LICENSE).
