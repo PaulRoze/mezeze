@@ -1,15 +1,25 @@
 #!/bin/bash
 
-SCRIPT_VERSION="v1.0.1"
+SCRIPT_VERSION="v1.0.2"
 
 # Function to check for script updates
 check_for_update() {
     echo "Checking for updates..."
-    local latest_version=$(curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh | grep '^SCRIPT_VERSION=' | cut -d '"' -f 2)
+    curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o /tmp/latest_mezeze.sh
+    if [ $? -ne 0 ]; then
+        read -r -p "Error: Failed to check for updates due to no internet connection. Do you want to proceed? [y/N] " yn
+        echo # add a newline for clean output
+        case $yn in
+            [Yy]* ) return 1;; # Skip update process
+            * ) exit 1;;
+        esac
+    fi
+    local latest_version=$(grep '^SCRIPT_VERSION=' /tmp/latest_mezeze.sh | cut -d '"' -f 2)
 
     if [[ $latest_version > $SCRIPT_VERSION ]]; then
-        echo "A new version of the script is available: $latest_version"
-        read -p "Do you want to update to the latest version? [y/N] " yn
+        echo "Current script version: $SCRIPT_VERSION"
+        echo "New version available: $latest_version"
+        read -r -p "Would you like to update to the latest version? [y/N] " yn
         case $yn in
             [Yy]* ) update_script; return 0;;
             * ) return 1;;
@@ -26,17 +36,29 @@ update_script() {
     local temp_script="/tmp/$script_name"
 
     echo "Downloading the latest version..."
-    curl -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
-    if [ -s "$temp_script" ]; then
-        chmod +x "$temp_script"
-        mv "$temp_script" "$0"
-        echo "Update completed. Please rerun the script."
-        exit 0
-    else
-        echo "Failed to download the update."
-        rm -f "$temp_script"
-        exit 1
+    curl --connect-timeout 10 -s https://raw.githubusercontent.com/PaulRoze/mezeze/main/mezeze.sh -o "$temp_script"
+    if [ $? -ne 0 ]; then
+        read -r -p "Error: Unable to connect to the internet. Do you want to proceed without updating? [y/N] " yn
+        echo # add a newline for clean output
+        case $yn in
+            [Yy]* ) return 1;; # Skip update process
+            * ) exit 1;;
+        esac
     fi
+
+    if [ ! -s "$temp_script" ]; then
+        read -r -p "Failed to download the update. Proceed without updating? [y/N] " yn
+        echo # add a newline for clean output
+        case $yn in
+            [Yy]* ) return 1;; # Skip update process
+            * ) exit 1;;
+        esac
+    fi
+
+    chmod +x "$temp_script"
+    mv "$temp_script" "$0"
+    echo "Update completed. Please rerun the script."
+    exit 0
 }
 
 # Check for updates at the beginning of the script
@@ -102,7 +124,7 @@ echo "Region: [${region}]"
 # Check if the user already exists
 if id "$username" &>/dev/null; then
     echo "User '$username' already exists."
-    read -p "Do you want to continue and update the kubeconfig for ${username}? [y/N] " yn
+    read -r -p "Do you want to continue and update the kubeconfig for ${username}? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* ) ;;
@@ -128,68 +150,50 @@ for cluster in $CLUSTER_LIST ; do
 done
 echo "Kubeconfig updated successfully for user '$username'."
 
+# Define the aliases as a variable
+KUBECTL_ALIASES=$(cat <<'EOF'
+# kubernetes
+alias k="kubectl"
+alias kx="/usr/local/bin/kubectx"
+alias kn="/usr/local/bin/kubens"
+alias ke="kubectl exec -it"
+alias kl="kubectl logs"
+alias kg="kubectl get"
+alias ktn="kubectl top no --use-protocol-buffers"
+alias ktp="kubectl top pod --use-protocol-buffers"
+alias kd="kubectl describe"
+alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
+alias kgn="kg nodes"
+alias kgp="kg pods"
+alias kgpa="kgp -A"
+alias kgd="kg deployment"
+alias kgr="kg rollout"
+alias kdp="kd pods"
+alias kdd="kd deployment"
+alias kdr="kd rollout"
+alias kdds="kd daemonset"
+alias kgpn="kgp --output=jsonpath={.items..metadata.name}"
+EOF
+)
+
 # Path to the dedicated Kubernetes alias file
 ALIAS_FILE="/home/$username/.k8s_aliases"
 
 # Check if .k8s_aliases already exists
 if [ -f "$ALIAS_FILE" ]; then
     echo "Kubernetes aliases file .k8s_aliases already exists for user $username."
-    read -p "Do you want to overwrite the existing Kubernetes aliases? [y/N] " yn
+    read -r -p "Do you want to overwrite the existing Kubernetes aliases? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )
-            # Overwrite the kubectl aliases in the dedicated file
-            echo '
-            # kubernetes
-            alias k="kubectl"
-            alias kx="/usr/local/bin/kubectx"
-            alias kn="/usr/local/bin/kubens"
-            alias ke="kubectl exec -it"
-            alias kl="kubectl logs"
-            alias kg="kubectl get"
-            alias ktn="kubectl top no --use-protocol-buffers"
-            alias ktp="kubectl top pod --use-protocol-buffers"
-            alias kd="kubectl describe"
-            alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
-            alias kgn="kg nodes"
-            alias kgp="kg pods"
-            alias kgpa="kgp -A"
-            alias kgd="kg deployment"
-            alias kgr="kg rollout"
-            alias kdp="kd pods"
-            alias kdd="kd deployment"
-            alias kdr="kd rollout"
-            alias kdds="kd daemonset"
-            alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
+            echo "$KUBECTL_ALIASES" > $ALIAS_FILE
             ;;
         * )
             echo "Not overwriting the existing Kubernetes aliases."
             ;;
     esac
 else
-    # Create the kubectl aliases in the dedicated file
-    echo '
-    # kubernetes
-    alias k="kubectl"
-    alias kx="/usr/local/bin/kubectx"
-    alias kn="/usr/local/bin/kubens"
-    alias ke="kubectl exec -it"
-    alias kl="kubectl logs"
-    alias kg="kubectl get"
-    alias ktn="kubectl top no --use-protocol-buffers"
-    alias ktp="kubectl top pod --use-protocol-buffers"
-    alias kd="kubectl describe"
-    alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
-    alias kgn="kg nodes"
-    alias kgp="kg pods"
-    alias kgpa="kgp -A"
-    alias kgd="kg deployment"
-    alias kgr="kg rollout"
-    alias kdp="kd pods"
-    alias kdd="kd deployment"
-    alias kdr="kd rollout"
-    alias kdds="kd daemonset"
-    alias kgpn="kgp --output=jsonpath={.items..metadata.name}"' > $ALIAS_FILE
+    echo "$KUBECTL_ALIASES" > $ALIAS_FILE
 fi
 
 # Check if .bashrc already sources the .k8s_aliases file
@@ -201,7 +205,7 @@ fi
 # Check if fzf is already installed
 if [ -d "/home/$username/.fzf" ]; then
     echo "fzf is already installed for user $username."
-    read -p "Do you want to remove fzf? [y/N] " yn
+    read -r -p "Do you want to remove fzf? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )
@@ -213,7 +217,7 @@ if [ -d "/home/$username/.fzf" ]; then
         * ) ;;
     esac
 else
-    read -p "Do you want to install fzf for user $username? [y/N] " yn
+    read -r -p "Do you want to install fzf for user $username? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )

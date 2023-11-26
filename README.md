@@ -20,9 +20,33 @@ Mezeze is a Bash script designed for AWS and Kubernetes environment management, 
 - The script checks for its latest version at startup and prompts for an update if a newer version is available.
 
 ## Prerequisites
-- Bash
-- Access to AWS and Kubernetes environments
-- Git (for cloning and contributing)
+
+Before you begin, ensure you have the following installed and configured on your system:
+
+1. **Bash**: A Unix shell and command language. Available by default on Linux and macOS. [More about Bash](https://www.gnu.org/software/bash/).
+
+2. **Curl**: A command-line tool for transferring data with URLs. [Installing Curl](https://curl.se/download.html).
+
+3. **AWS CLI**: The Amazon Web Services Command Line Interface is used for interacting with AWS services. 
+   - Installation: [Installing the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+   - Configuration: [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
+
+4. **Kubectl**: A command-line tool for controlling Kubernetes clusters. 
+   - Installation: [Installing kubectl](https://kubernetes.io/docs/tasks/tools/).
+   - Ensure that it's configured to interact with your Kubernetes cluster.
+
+5. **Git**: Required for cloning the repository and managing versions.
+   - [Git Installation Guide](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
+6. **Internet Connection**: Required for downloading necessary files, updates, and interacting with remote services like AWS and Kubernetes clusters.
+
+### Optional:
+
+- **EC2 Metadata Tool**: If you are running the script on an AWS EC2 instance, this tool is used to fetch AWS region and environment information. Typically, it's pre-installed on AWS EC2 instances.
+
+### Note:
+- Ensure that your user account has the necessary permissions to perform operations like installing software, configuring AWS CLI, and managing Kubernetes clusters.
+
 
 ## Usage
 
@@ -37,7 +61,6 @@ chmod +x mezeze.sh;
 ./mezeze.sh <username> <region> <environment>
 ```
 Replace `<username>`, `<region>`, and `<environment>` with appropriate values.
-**_You can provide only username, and the script will prompt for the rest of the values._**
 
 3. **Update Prompt:**
 The script will prompt for updates if a new version is available.
@@ -53,10 +76,13 @@ To access the help menu for detailed usage instructions, run:
 graph TD
     A[Start Script] --> B[Check for updates]
     B -->|Update Available| C[Ask to Update]
-    B -->|No Update| D1[Validate '--help' or '-h']
-    C -->|Yes to Update| E[Update Script]
+    B -->|No Update or Unable to Connect| D1[Validate '--help' or '-h']
+    C -->|Yes to Update| E[Attempt Update Script]
     C -->|No Update| D1
-    E --> F[Exit after Update]
+    E -->|Update Failed or Unable to Connect| F[Ask to Proceed Without Update]
+    E -->|Update Successful| G[Exit after Update]
+    F -->|Proceed| D1
+    F -->|Exit| H[Exit Script]
     D1 -->|Help Requested| D2[Show Usage and Exit]
     D1 -->|No Help Request| D3[Check Argument Count]
     D3 -->|Insufficient Args| D2
@@ -105,31 +131,45 @@ sequenceDiagram
     alt Update Available
         F->>U: Prompt for Update
         U->>F: User Choice
-        F->>S: Update Script
-        S->>S: Exit
-    else No Update
-        S->>F: Validate Input
-        F->>U: Get User Input
-        U->>F: Input Provided
-        alt Valid Input
-            F->>S: Set Parameters
-            S->>F: Check User Existence
-            alt User Exists
-                F->>S: Update kubeconfig
-            else New User
-                F->>S: Create User
+        alt Yes to Update
+            F->>S: Attempt Update Script
+            alt Update Successful
+                S->>S: Exit
+            else Update Failed or Unable to Connect
+                F->>U: Ask to Proceed Without Update
+                U->>F: User Decision
+                alt Proceed
+                    S->>F: Validate Input
+                else Exit
+                    S->>S: Exit Script
+                end
             end
-            S->>S: Script Completion
-        else Invalid Input
-            F->>S: Show Usage and Exit
+        else No Update
+            S->>F: Validate Input
         end
+    else No Update or Unable to Connect
+        S->>F: Validate Input
+    end
+    F->>U: Get User Input
+    alt Valid Input
+        U->>F: Input Provided
+        F->>S: Set Parameters
+        S->>F: Check User Existence
+        alt User Exists
+            F->>S: Update kubeconfig
+        else New User
+            F->>S: Create User
+        end
+        S->>S: Script Completion
+    else Invalid Input
+        F->>S: Show Usage and Exit
     end
 ```
 ## Issues and Support
 For issues, feature requests, or assistance, please open an issue in the repository.
 * Report by [opening a new issue](https://github.com/PaulRoze/mezeze/issues/new); it's that easy!
 
-🌌 **Crafting the Perfect Bug Report in Mezeze's Universe**:
+🌌 **Crafting the Perfect Bug Report in Mezeze**:
 
 1. **Quick Summary**: Start with a brief overview. Set the stage for the issue you encountered.
 
