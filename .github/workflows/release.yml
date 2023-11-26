@@ -32,7 +32,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.CURRENT_VERSION }}
-          name: Release ${{ env.CURRENT_VERSION }}
+          name: Mezeze ${{ env.CURRENT_VERSION }}
           draft: false
           prerelease: false
         env:
