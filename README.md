@@ -141,10 +141,11 @@ For issues, feature requests, or assistance, please open an issue in the reposit
 
 Simple, clear reports help us make Mezeze even better for navigating the clouds!
 
-## Contributors
-
-<!-- readme: collaborators,contributors -start -->
-<!-- readme: collaborators,contributors -end -->
 
 ## License
 This project is released under the [MIT License](LICENSE).
+
+## Acknowledgements
+
+<!-- readme: collaborators,contributors -start -->
+<!-- readme: collaborators,contributors -end -->
