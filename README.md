@@ -43,17 +43,109 @@ To access the help menu for detailed usage instructions, run:
 ./mezeze.sh --help
 ```
 
-## Contributing
-Contributions to Mezeze are welcome. To contribute:
+## Logic Flow
+```mermaid
+graph TD
+    A[Start Script] --> B[Check for updates]
+    B -->|Update Available| C[Ask to Update]
+    B -->|No Update| D1[Validate '--help' or '-h']
+    C -->|Yes to Update| E[Update Script]
+    C -->|No Update| D1
+    E --> F[Exit after Update]
+    D1 -->|Help Requested| D2[Show Usage and Exit]
+    D1 -->|No Help Request| D3[Check Argument Count]
+    D3 -->|Insufficient Args| D2
+    D3 -->|Valid Args| D4[Validate Username Format]
+    D4 -->|Invalid Username| I[Error: Invalid Username and Exit]
+    D4 --> J[Set Username, Region, Environment]
+    J --> K[Check if User Exists]
+    K -->|User Exists| L[Ask to Update kubeconfig]
+    K -->|New User| M[Create New User]
+    L -->|Yes to Update kubeconfig| N[Continue]
+    L -->|No Update| O[Exit]
+    M --> N
+    N --> P[Check if Region is Set]
+    P -->|Region Not Set| Q[Error: Region Not Set and Exit]
+    P --> R[Update kubeconfig for EKS Clusters]
+    R --> S1[Check Kubernetes Aliases File]
+    S1 -->|File Exists| S2[Ask to Overwrite Aliases]
+    S1 -->|No File| S3[Create Aliases File]
+    S2 -->|Yes to Overwrite| S3
+    S2 -->|No Overwrite| S4[Skip Alias Creation]
+    S3 --> S4[Alias File Created or Updated]
+    S4 --> T1[Check if .bashrc Sources .k8s_aliases]
+    T1 -->|Not Sourced| T2[Update .bashrc]
+    T1 -->|Already Sourced| T3[Skip .bashrc Update]
+    T2 --> T3[.bashrc Updated]
+    T3 --> U1[Check if fzf Installed]
+    U1 -->|fzf Installed| U2[Ask to Remove fzf]
+    U1 -->|fzf Not Installed| U3[Ask to Install fzf]
+    U2 -->|Yes to Remove| U4[Remove fzf and Update .bashrc]
+    U2 -->|No Removal| U5[Skip fzf Changes]
+    U3 -->|Yes to Install| U6[Install fzf and Update .bashrc]
+    U3 -->|No Install| U5
+    U4 --> U5[fzf Removed]
+    U6 --> U5[fzf Installed]
+    U5 --> V[Script Execution Completed]
+```
+## Sequence Diagram
+```mermaid
+sequenceDiagram
+    participant S as Script
+    participant U as User
+    participant F as Functions
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit and push your changes.
-4. Open a pull request against the `main` branch.
-
-
+    S->>S: Start
+    S->>F: Check for Updates
+    alt Update Available
+        F->>U: Prompt for Update
+        U->>F: User Choice
+        F->>S: Update Script
+        S->>S: Exit
+    else No Update
+        S->>F: Validate Input
+        F->>U: Get User Input
+        U->>F: Input Provided
+        alt Valid Input
+            F->>S: Set Parameters
+            S->>F: Check User Existence
+            alt User Exists
+                F->>S: Update kubeconfig
+            else New User
+                F->>S: Create User
+            end
+            S->>S: Script Completion
+        else Invalid Input
+            F->>S: Show Usage and Exit
+        end
+    end
+```
 ## Issues and Support
 For issues, feature requests, or assistance, please open an issue in the repository.
+* Report by [opening a new issue](https://github.com/PaulRoze/mezeze/issues/new); it's that easy!
+
+🌌 **Crafting the Perfect Bug Report in Mezeze's Universe**:
+
+1. **Quick Summary**: Start with a brief overview. Set the stage for the issue you encountered.
+
+2. **Reproduction Steps**:
+   - Clearly list steps to recreate the bug.
+   - Include code samples if you have them; they're like secret maps to the bug.
+
+3. **Expectation vs. Reality**:
+   - What you thought would happen.
+   - What actually happened.
+
+4. **Extra Notes**:
+   - Any theories or fixes you tried? Share them! They help in our cloud journey.
+
+Simple, clear reports help us make Mezeze even better for navigating the clouds!
+
 
 ## License
 This project is released under the [MIT License](LICENSE).
+
+## Acknowledgements
+
+<!-- readme: collaborators,contributors -start -->
+<!-- readme: collaborators,contributors -end -->

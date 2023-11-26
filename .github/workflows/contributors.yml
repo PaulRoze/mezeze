@@ -1,0 +1,26 @@
+name: Update Contributors List
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  contrib-readme-job:
+    runs-on: ubuntu-latest
+    name: A job to automate contrib in readme
+    steps:
+      - name: Contribute List
+        uses: akhilmhdh/contributors-readme-action@v2.3.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          image_size: 60
+          columns_per_row: 6
+          commit_message: "Update contributors list"
+          readme_path: "README.md"  # Optional: specify if your README is not in the root or has a different name
+          use_username: false       # Optional: set to true to use GitHub usernames instead of display names
+          auto_detect_branch_protection: true  # Optional: detects branch protection and creates PR if needed
+          pr_title_on_protected: 'Update contributors list'  # Optional: title for the PR when branch is protected
