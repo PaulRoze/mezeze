@@ -148,4 +148,14 @@ This project is released under the [MIT License](LICENSE).
 ## Acknowledgements
 
 <!-- readme: collaborators,contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/PaulRoze">
+            <img src="https://avatars.githubusercontent.com/u/111685920?v=4" width="60;" alt="PaulRoze"/>
+            <br />
+            <sub><b>Pavel Rozentsvet</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: collaborators,contributors -end -->
