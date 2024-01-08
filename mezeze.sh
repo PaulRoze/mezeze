@@ -201,9 +201,10 @@ fi
 for ALIAS_FILE_NAME in .bash_aliases_k8s .bash_aliases; do 
 	if ! grep -q "source .*$(basename $ALIAS_FILE_NAME )" /home/$username/.bashrc && test -f /home/$username/$ALIAS_FILE_NAME ; then
 	# Add a line in .bashrc to source the .k8s_aliases file
-	cat << EOF >> /home/${username}/.bashrc    
+	cat << EOF >> /home/${username}/.bashrc
+export PATH=/usr/local/bin:\$PATH
 # Source aliases
-if [ -f "\${HOME}/.$ALIAS_FILE_NAME" ]; then
+if [ -f "\${HOME}/$ALIAS_FILE_NAME" ]; then
 	source "\${HOME}/$ALIAS_FILE_NAME"
 fi
 #
