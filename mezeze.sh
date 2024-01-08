@@ -210,7 +210,7 @@ fi
 #
 EOF
 	fi
-	chown ${username}: /home/$username/$ALIAS_FILE_NAME
+	test -f /home/$username/$ALIAS_FILE_NAME && chown ${username}: /home/$username/$ALIAS_FILE_NAME
 done
 
 # Check if fzf is already installed
