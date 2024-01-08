@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="v1.0.2"
+SCRIPT_VERSION="v1.0.3"
 
 # Function to check for script updates
 check_for_update() {
@@ -25,7 +25,7 @@ check_for_update() {
             * ) return 1;;
         esac
     else
-        echo "You are using the latest version of the script."
+        echo "You are using the latest version of the script [$SCRIPT_VERSION]."
         return 1
     fi
 }
@@ -165,6 +165,7 @@ alias kd="kubectl describe"
 alias kni="kubectl get nodes -o=custom-columns=NODE:.metadata.name,MAX_PODS:.status.allocatable.pods,CAPACITY_PODS:.status.capacity.pods,INSTANCE_TYPE:.metadata.labels.\"node\.kubernetes\.io/instance-type\",ARCH:.status.nodeInfo.architecture,NODE_NAME:.metadata.labels.\"kubernetes\.io/hostname\""
 alias kgn="kg nodes"
 alias kgp="kg pods"
+alias kgpw="kgp -o wide"
 alias kgpa="kgp -A"
 alias kgd="kg deployment"
 alias kgr="kg rollout"
@@ -177,11 +178,11 @@ EOF
 )
 
 # Path to the dedicated Kubernetes alias file
-ALIAS_FILE="/home/$username/.k8s_aliases"
+ALIAS_FILE="/home/$username/.bash_aliases_k8s"
 
-# Check if .k8s_aliases already exists
+# Check if .bash_aliases_k8s already exists
 if [ -f "$ALIAS_FILE" ]; then
-    echo "Kubernetes aliases file .k8s_aliases already exists for user $username."
+    echo "Kubernetes aliases file $(basename $ALIAS_FILE) already exists for user $username. at $ALIAS_FILE"
     read -r -p "Do you want to overwrite the existing Kubernetes aliases? [y/N] " yn
     : ${yn:="n"}
     case $yn in
@@ -196,11 +197,21 @@ else
     echo "$KUBECTL_ALIASES" > $ALIAS_FILE
 fi
 
-# Check if .bashrc already sources the .k8s_aliases file
-if ! sudo -u $username grep -q "source /home/$username/.k8s_aliases" /home/$username/.bashrc; then
-    # Add a line in .bashrc to source the .k8s_aliases file
-    echo "source /home/$username/.k8s_aliases" >> /home/$username/.bashrc
+# Check if .bashrc already sources the aliase files
+for ALIAS_FILE_NAME in .bash_aliases_k8s .bash_aliases; do 
+	if ! grep -q "source .*$(basename $ALIAS_FILE_NAME )" /home/$username/.bashrc && test -f /home/$username/$ALIAS_FILE_NAME ; then
+	# Add a line in .bashrc to source the .k8s_aliases file
+	cat << EOF >> /home/${username}/.bashrc
+export PATH=/usr/local/bin:\$PATH
+# Source aliases
+if [ -f "\${HOME}/$ALIAS_FILE_NAME" ]; then
+	source "\${HOME}/$ALIAS_FILE_NAME"
 fi
+#
+EOF
+	fi
+	test -f /home/$username/$ALIAS_FILE_NAME && chown ${username}: /home/$username/$ALIAS_FILE_NAME
+done
 
 # Check if fzf is already installed
 if [ -d "/home/$username/.fzf" ]; then
