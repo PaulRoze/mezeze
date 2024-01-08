@@ -195,7 +195,6 @@ if [ -f "$ALIAS_FILE" ]; then
     esac
 else
     echo "$KUBECTL_ALIASES" > $ALIAS_FILE
-    chown ${username}: $ALIAS_FILE
 fi
 
 # Check if .bashrc already sources the aliase files
@@ -210,7 +209,7 @@ fi
 #
 EOF
 	fi
-	chown ${username}: $ALIAS_FILE_NAME
+	chown ${username}: /home/$username/$ALIAS_FILE_NAME
 done
 
 # Check if fzf is already installed
