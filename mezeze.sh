@@ -169,6 +169,7 @@ alias kgpa="kgp -A"
 alias kgd="kg deployment"
 alias kgr="kg rollout"
 alias kdp="kd pods"
+alias kdpw="kd pods -o wide"
 alias kdd="kd deployment"
 alias kdr="kd rollout"
 alias kdds="kd daemonset"
@@ -177,17 +178,16 @@ EOF
 )
 
 # Path to the dedicated Kubernetes alias file
-ALIAS_FILE="/home/$username/.k8s_aliases"
+ALIAS_FILE="/home/$username/.bash_aliases_k8s"
 
-# Check if .k8s_aliases already exists
+# Check if .bash_aliases_k8s already exists
 if [ -f "$ALIAS_FILE" ]; then
-    echo "Kubernetes aliases file .k8s_aliases already exists for user $username."
+    echo "Kubernetes aliases file $(basename $ALIAS_FILE) already exists for user $username. at $ALIAS_FILE"
     read -r -p "Do you want to overwrite the existing Kubernetes aliases? [y/N] " yn
     : ${yn:="n"}
     case $yn in
         [Yy]* )
             echo "$KUBECTL_ALIASES" > $ALIAS_FILE
-	    chown ${username}: $ALIAS_FILE
             ;;
         * )
             echo "Not overwriting the existing Kubernetes aliases."
@@ -198,11 +198,20 @@ else
     chown ${username}: $ALIAS_FILE
 fi
 
-# Check if .bashrc already sources the .k8s_aliases file
-if ! sudo -u $username grep -q "source /home/$username/.k8s_aliases" /home/$username/.bashrc; then
-    # Add a line in .bashrc to source the .k8s_aliases file
-    echo "source /home/$username/.k8s_aliases" >> /home/$username/.bashrc
+# Check if .bashrc already sources the aliase files
+for ALIAS_FILE_NAME in .bash_aliases_k8s .bash_aliases; do 
+	if ! grep -q "source .*$(basename $ALIAS_FILE_NAME )" /home/$username/.bashrc && test -f /home/$username/$ALIAS_FILE_NAME ; then
+	# Add a line in .bashrc to source the .k8s_aliases file
+	cat << EOF >> /home/${username}/.bashrc    
+# Source aliases
+if [ -f "\${HOME}/.$ALIAS_FILE_NAME" ]; then
+	source "\${HOME}/.$ALIAS_FILE_NAME"
 fi
+#
+EOF
+	fi
+	chown ${username}: $ALIAS_FILE_NAME
+done
 
 # Check if fzf is already installed
 if [ -d "/home/$username/.fzf" ]; then
