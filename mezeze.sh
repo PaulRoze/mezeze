@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_VERSION="v1.0.2"
+SCRIPT_VERSION="v1.0.3"
 
 # Function to check for script updates
 check_for_update() {
@@ -187,6 +187,7 @@ if [ -f "$ALIAS_FILE" ]; then
     case $yn in
         [Yy]* )
             echo "$KUBECTL_ALIASES" > $ALIAS_FILE
+	    chown ${username}: $ALIAS_FILE
             ;;
         * )
             echo "Not overwriting the existing Kubernetes aliases."
@@ -194,6 +195,7 @@ if [ -f "$ALIAS_FILE" ]; then
     esac
 else
     echo "$KUBECTL_ALIASES" > $ALIAS_FILE
+    chown ${username}: $ALIAS_FILE
 fi
 
 # Check if .bashrc already sources the .k8s_aliases file
