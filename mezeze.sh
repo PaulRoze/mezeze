@@ -204,7 +204,7 @@ for ALIAS_FILE_NAME in .bash_aliases_k8s .bash_aliases; do
 	cat << EOF >> /home/${username}/.bashrc    
 # Source aliases
 if [ -f "\${HOME}/.$ALIAS_FILE_NAME" ]; then
-	source "\${HOME}/.$ALIAS_FILE_NAME"
+	source "\${HOME}/$ALIAS_FILE_NAME"
 fi
 #
 EOF
