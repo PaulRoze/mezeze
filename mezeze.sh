@@ -25,7 +25,7 @@ check_for_update() {
             * ) return 1;;
         esac
     else
-        echo "You are using the latest version of the script."
+        echo "You are using the latest version of the script [$SCRIPT_VERSION]."
         return 1
     fi
 }
