@@ -201,6 +201,13 @@ This project is released under the [MIT License](LICENSE).
             <br />
             <sub><b>Pavel Rozentsvet</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/GElkayam">
+            <img src="https://avatars.githubusercontent.com/u/9839713?v=4" width="60;" alt="GElkayam"/>
+            <br />
+            <sub><b>Guy Elkayam</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: collaborators,contributors -end -->
